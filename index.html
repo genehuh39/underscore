@@ -118,7 +118,6 @@
       padding: 0 0 0 20px;
     }
       li {
-        width: 500px;
         margin-bottom: 10px;
       }
       code, pre, tt {
@@ -221,6 +220,7 @@
       <li>- <a href="#sample">sample</a></li>
       <li>- <a href="#toArray">toArray</a></li>
       <li>- <a href="#size">size</a></li>
+      <li>- <a href="#partition">partition</a></li>
     </ul>
 
     <a class="toc_title" href="#arrays">
@@ -234,7 +234,6 @@
       <li>- <a href="#compact">compact</a></li>
       <li>- <a href="#flatten">flatten</a></li>
       <li>- <a href="#without">without</a></li>
-      <li>- <a href="#partition">partition</a></li>
       <li>- <a href="#union">union</a></li>
       <li>- <a href="#intersection">intersection</a></li>
       <li>- <a href="#difference">difference</a></li>
@@ -261,8 +260,8 @@
       <li>- <a href="#debounce">debounce</a></li>
       <li>- <a href="#once">once</a></li>
       <li>- <a href="#after">after</a></li>
-      <li>- <a href="#now">now</a></li>
       <li>- <a href="#wrap">wrap</a></li>
+      <li>- <a href="#negate">negate</a></li>
       <li>- <a href="#compose">compose</a></li>
     </ul>
 
@@ -316,6 +315,7 @@
       <li>- <a href="#escape">escape</a></li>
       <li>- <a href="#unescape">unescape</a></li>
       <li>- <a href="#result">result</a></li>
+      <li>- <a href="#now">now</a></li>
       <li>- <a href="#template">template</a></li>
     </ul>
 
@@ -356,12 +356,9 @@
 
     <p>
       Underscore provides 80-odd functions that support both the usual
-      functional suspects: <b>map</b>, <b>select</b>, <b>invoke</b> &mdash;
+      functional suspects: <b>map</b>, <b>filter</b>, <b>invoke</b> &mdash;
       as well as more specialized helpers: function binding, javascript
-      templating, deep equality testing, and so on. It delegates to built-in
-      functions, if present, so modern browsers will use the
-      native implementations of <b>forEach</b>, <b>map</b>, <b>reduce</b>,
-      <b>filter</b>, <b>every</b>, <b>some</b> and <b>indexOf</b>.
+      templating, deep equality testing, and so on.
     </p>
 
     <p>
@@ -423,7 +420,7 @@
         <b>Require.js</b> <tt>require(["underscore"], ...</tt>
       </li>
       <li>
-        <b>Bower</b> <tt>bowser install underscore</tt>
+        <b>Bower</b> <tt>bower install underscore</tt>
       </li>
       <li>
         <b>Component</b> <tt>component install jashkenas/underscore</tt>
@@ -442,8 +439,7 @@
         function. The <b>iterator</b> is bound to the <b>context</b> object, if one is
         passed. Each invocation of <b>iterator</b> is called with three arguments:
         <tt>(element, index, list)</tt>. If <b>list</b> is a JavaScript object, <b>iterator</b>'s
-        arguments will be <tt>(value, key, list)</tt>. Delegates to the native
-        <b>forEach</b> function if it exists, and returns the original <b>list</b> for chaining.
+        arguments will be <tt>(value, key, list)</tt>. Returns the <b>list</b> for chaining.
       </p>
       <pre>
 _.each([1, 2, 3], alert);
@@ -467,9 +463,9 @@ _.each({one: 1, two: 2, three: 3}, alert);
         <span class="alias">Alias: <b>collect</b></span>
         <br />
         Produces a new array of values by mapping each value in <b>list</b>
-        through a transformation function (<b>iterator</b>). If the native <b>map</b> method
-        exists, it will be used instead. If <b>list</b> is a JavaScript object,
-        <b>iterator</b>'s arguments will be <tt>(value, key, list)</tt>.
+        through a transformation function (<b>iterator</b>). If <b>list</b>
+        is a JavaScript object, <b>iterator</b>'s arguments will be
+        <tt>(value, key, list)</tt>.
       </p>
       <pre>
 _.map([1, 2, 3], function(num){ return num * 3; });
@@ -528,8 +524,7 @@ var even = _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
         <span class="alias">Alias: <b>select</b></span>
         <br />
         Looks through each value in the <b>list</b>, returning an array of all
-        the values that pass a truth test (<b>predicate</b>). Delegates to the
-        native <b>filter</b> method, if it exists.
+        the values that pass a truth test (<b>predicate</b>).
       </p>
       <pre>
 var evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
@@ -581,8 +576,8 @@ var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
         <b class="header">every</b><code>_.every(list, [predicate], [context])</code>
         <span class="alias">Alias: <b>all</b></span>
         <br />
-        Returns <i>true</i> if all of the values in the <b>list</b> pass the <b>predicate</b>
-        truth test. Delegates to the native method <b>every</b>, if present.
+        Returns <i>true</i> if all of the values in the <b>list</b> pass the
+        <b>predicate</b> truth test.
       </p>
       <pre>
 _.every([true, 1, null, 'yes'], _.identity);
@@ -595,8 +590,7 @@ _.every([true, 1, null, 'yes'], _.identity);
         <br />
         Returns <i>true</i> if any of the values in the <b>list</b> pass the
         <b>predicate</b> truth test. Short-circuits and stops traversing the list
-        if a true element is found. Delegates to the native method <b>some</b>,
-        if present.
+        if a true element is found.
       </p>
       <pre>
 _.some([null, 0, 'yes', false]);
@@ -775,6 +769,17 @@ _.size({one: 1, two: 2, three: 3});
 =&gt; 3
 </pre>
 
+      <p id="partition">
+        <b class="header">partition</b><code>_.partition(array, predicate)</code>
+        <br />
+        Split <b>array</b> into two arrays: one whose elements all satisfy
+        <b>predicate</b> and one whose elements all do not satisfy <b>predicate</b>.
+      </p>
+      <pre>
+_.partition([0, 1, 2, 3, 4, 5], isOdd);
+=&gt; [[1, 3, 5], [0, 2, 4]]
+</pre>
+
       <h2 id="arrays">Array Functions</h2>
 
       <p>
@@ -868,17 +873,6 @@ _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
 =&gt; [2, 3, 4]
 </pre>
 
-      <p id="partition">
-        <b class="header">partition</b><code>_.partition(array, predicate)</code>
-        <br />
-        Split <b>array</b> into two arrays: one whose elements all satisfy
-        <b>predicate</b> and one whose elements all do not satisfy <b>predicate</b>.
-      </p>
-      <pre>
-_.partition([0, 1, 2, 3, 4, 5], isOdd);
-=&gt; [[1, 3, 5], [0, 2, 4]]
-</pre>
-
       <p id="union">
         <b class="header">union</b><code>_.union(*arrays)</code>
         <br />
@@ -963,8 +957,7 @@ _.object([['moe', 30], ['larry', 40], ['curly', 50]]);
         <b class="header">indexOf</b><code>_.indexOf(array, value, [isSorted])</code>
         <br />
         Returns the index at which <b>value</b> can be found in the <b>array</b>,
-        or <i>-1</i> if value is not present in the <b>array</b>. Uses the native
-        <b>indexOf</b> function unless it's missing. If you're working with a
+        or <i>-1</i> if value is not present in the <b>array</b>. If you're working with a
         large array, and you know that the array is already sorted, pass <tt>true</tt>
         for <b>isSorted</b> to use a faster binary search ... or, pass a number as
         the third argument in order to look for the first matching value in the
@@ -979,8 +972,7 @@ _.indexOf([1, 2, 3], 2);
         <b class="header">lastIndexOf</b><code>_.lastIndexOf(array, value, [fromIndex])</code>
         <br />
         Returns the index of the last occurrence of <b>value</b> in the <b>array</b>,
-        or <i>-1</i> if value is not present. Uses the native <b>lastIndexOf</b>
-        function if possible. Pass <b>fromIndex</b> to start your search at a
+        or <i>-1</i> if value is not present. Pass <b>fromIndex</b> to start your search at a
         given index.
       </p>
       <pre>
@@ -1038,7 +1030,8 @@ _.range(0);
         Bind a <b>function</b> to an <b>object</b>, meaning that whenever
         the function is called, the value of <i>this</i> will be the <b>object</b>.
         Optionally, pass <b>arguments</b> to the <b>function</b> to pre-fill them,
-        also known as <b>partial application</b>.
+        also known as <b>partial application</b>. For partial application without
+        context binding, use <a href="#partial">partial</a>.
       </p>
       <pre>
 var func = function(greeting){ return greeting + ': ' + this.name };
@@ -1204,18 +1197,6 @@ _.each(notes, function(note) {
 // renderNotes is run once, after all notes have saved.
 </pre>
 
-      <p id="now">
-        <b class="header">now</b><code>_.now()</code>
-        <br />
-        Returns an integer timestamp for the current time, using the fastest
-        method available in the runtime. Useful for implementing timing/animation
-        functions.
-      </p>
-      <pre>
-_.now();
-=&gt; 1392066795351
-</pre>
-
       <p id="wrap">
         <b class="header">wrap</b><code>_.wrap(function, wrapper)</code>
         <br />
@@ -1231,6 +1212,17 @@ hello = _.wrap(hello, function(func) {
 });
 hello();
 =&gt; 'before, hello: moe, after'
+</pre>
+
+      <p id="negate">
+        <b class="header">negate</b><code>_.negate(predicate)</code>
+        <br />
+        Returns a new negated version of the <b>predicate</b> function.
+      </p>
+      <pre>
+var isFalsy = _.negate(Boolean);
+_.find([-2, -1, 0, 1, 2], isFalsy);
+=&gt; 0
 </pre>
 
       <p id="compose">
@@ -1322,30 +1314,39 @@ _.extend({name: 'moe'}, {age: 50});
         <b class="header">pick</b><code>_.pick(object, *keys)</code>
         <br />
         Return a copy of the <b>object</b>, filtered to only have values for
-        the whitelisted <b>keys</b> (or array of valid keys).
+        the whitelisted <b>keys</b> (or array of valid keys).  Alternatively
+        accepts a predicate indicating which keys to pick.
       </p>
       <pre>
 _.pick({name: 'moe', age: 50, userid: 'moe1'}, 'name', 'age');
 =&gt; {name: 'moe', age: 50}
+_.pick({name: 'moe', age: 50, userid: 'moe1'}, function(value, key, object) {
+  return _.isNumber(value);
+});
+=&gt; {age: 50}
 </pre>
 
       <p id="omit">
         <b class="header">omit</b><code>_.omit(object, *keys)</code>
         <br />
         Return a copy of the <b>object</b>, filtered to omit the blacklisted
-        <b>keys</b> (or array of keys).
+        <b>keys</b> (or array of keys).  Alternatively accepts a predicate
+        indicating which keys to omit.
       </p>
       <pre>
 _.omit({name: 'moe', age: 50, userid: 'moe1'}, 'userid');
 =&gt; {name: 'moe', age: 50}
+_.omit({name: 'moe', age: 50, userid: 'moe1'}, function(value, key, object) {
+  return _.isNumber(value);
+});
+=&gt; {name: 'moe', userid: 'moe1'}
 </pre>
 
       <p id="defaults">
         <b class="header">defaults</b><code>_.defaults(object, *defaults)</code>
         <br />
-        Fill in <tt>undefined</tt> properties in <b>object</b> with values from the
-        <b>defaults</b> objects, and return the <b>object</b>. As soon as the
-        property is filled, further defaults will have no effect.
+        Fill in <tt>undefined</tt> properties in <b>object</b> with the first 
+        value present in the following list of <b>defaults</b> objects.
       </p>
       <pre>
 var iceCream = {flavor: "chocolate"};
@@ -1432,7 +1433,7 @@ _.isEqual(moe, clone);
       <p id="isEmpty">
         <b class="header">isEmpty</b><code>_.isEmpty(object)</code>
         <br />
-        Returns <i>true</i> if <b>object</b> contains no values
+        Returns <i>true</i> if an enumerable <b>object</b> contains no values
         (no enumerable own-properties).
       </p>
       <pre>
@@ -1635,6 +1636,13 @@ var moe = {name: 'moe'};
 moe === _.constant(moe)();
 =&gt; true</pre>
 
+      <p id="noop">
+        <b class="header">noop</b><code>_.noop()</code>
+        <br />
+        Returns <tt>undefined</tt> irrespective of the arguments passed to it.
+        Useful as the default for optional callback arguments.
+      </p>
+
       <p id="times">
         <b class="header">times</b><code>_.times(n, iterator, [context])</code>
         <br />
@@ -1720,6 +1728,18 @@ _.result(object, 'cheese');
 =&gt; "crumpets"
 _.result(object, 'stuff');
 =&gt; "nonsense"</pre>
+
+      <p id="now">
+        <b class="header">now</b><code>_.now()</code>
+        <br />
+        Returns an integer timestamp for the current time, using the fastest
+        method available in the runtime. Useful for implementing timing/animation
+        functions.
+      </p>
+      <pre>
+_.now();
+=&gt; 1392066795351
+</pre>
 
       <p id="template">
         <b class="header">template</b><code>_.template(templateString, [data], [settings])</code>
@@ -2002,8 +2022,11 @@ _([1, 2, 3]).value();
             placeholder variable, to be filled-in later.
           </li>
           <li>
-            The <tt>_.each</tt> function now returns the original iterated list 
-            (just like it used to), for better chaining.
+            The <tt>_.each</tt> function now returns a reference to the list for chaining.
+          </li>
+          <li>
+            The <tt>_.keys</tt> function now returns an empty array for
+            non-objects instead of throwing.
           </li>
           <li>
             The <tt>_.keys</tt> function now returns an empty array for
